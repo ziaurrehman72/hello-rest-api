@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/city")
+@RequestMapping("/list")
 public class CityController {
 
     @GetMapping
@@ -23,9 +23,9 @@ public class CityController {
 
         List<String> cityList=new ArrayList<String>();
 
-        String city ="Mumbai";
-        String city2="Delhi";
-        String city3="Brussels";
+        String city ="Hey";
+        String city2="Zia";
+        String city3="This side";
         
         cityList.add(city);
         cityList.add(city2);

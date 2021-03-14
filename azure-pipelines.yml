@@ -6,14 +6,60 @@
 trigger:
 - master
 
+variables:
+  docker_repo_name: ziaurrehmans/hello-rest-api
+  MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
+  MAVEN_OPTS: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+  docker_tag: |
+       latest
+       $(Build.BuildId)
+     
 pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: Cache@2
+  inputs:
+    key: 'maven | "$(Agent.OS)" | **/pom.xml'
+    restoreKeys: |
+      maven | "$(Agent.OS)"
+      maven
+    path: $(MAVEN_CACHE_FOLDER)
+  displayName: Cache Maven local repo
+
+- script: mvn install -B -e
+  displayName: Installing cached mvn dependencies
+
+- task: Maven@3
+  displayName: Maven Build
+  inputs:
+    mavenPomFile: 'pom.xml'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    javaHomeOption: 'JDKVersion'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: false
+    mavenOptions: '$(MAVEN_OPTS)'
+
+- task: Docker@2
+  displayName: Buildigng Docker image
+  inputs:
+    containerRegistry: 'Dockerhub-ServiceConnection'
+    repository: $(docker_repo_name)
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
+    tags: $(docker_tag)
+    arguments: '--cache-from=$(docker_repo_name):latest' 
+
+- task: Bash@3
+  displayName: Test and verify the docker image
+  inputs:
+    targetType: 'inline'
+    script: |
+      docker run -d -p  8080:8080 $(docker_repo_name):latest      
+      echo 'Let it be up...'
+      sleep 5
+      curl localhost:8080/list

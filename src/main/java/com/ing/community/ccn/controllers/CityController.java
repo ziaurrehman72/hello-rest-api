@@ -15,22 +15,22 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/list")
-public class CityController {
+public class ListController {
 
     @GetMapping
     @ResponseBody
     public List<String> getAllCities() throws Exception {
 
-        List<String> cityList=new ArrayList<String>();
+        List<String> list=new ArrayList<String>();
 
-        String city ="Hey";
-        String city2="Zia";
-        String city3="This side";
+        String str1 ="Hey";
+        String str2="Zia";
+        String str3="This side";
         
-        cityList.add(city);
-        cityList.add(city2);
-        cityList.add(city3);
-        return cityList;
+        list.add(str1);
+        list.add(str2);
+        list.add(str3);
+        return list;
     }
 
 }

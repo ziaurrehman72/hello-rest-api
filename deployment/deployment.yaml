@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    fluxcd.io/tag.city-rest-api: semver:~1.1
+    fluxcd.io/automated: 'true'
+  labels:
+    app: city-rest-api
+  name: city-rest-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: city-rest-api
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp:
+      labels:
+        app: city-rest-api
+    spec:
+      containers:
+      - image: sandipdocker1990/city-rest-api-gitops:1.1.9
+        name: city-rest-api
+        imagePullPolicy: Always
+        resources: {}
+        ports:
+        - containerPort: 8080
+status: {}

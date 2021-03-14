@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: city-rest-api
+    fluxcd.io/sync-gc-mark: sha256.8rc3tLVEcTjof2O4sYtWfIO-PM55cPTXR2cnLZ1AcgQ
+  name: city-rest-api-svc
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: city-rest-api
+  type: LoadBalancer
+status:
+  loadBalancer: {}
